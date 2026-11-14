@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useCategorias } from '../../api/libreria';
-import { MOCK_ACTIVO } from '../../config';
+import { MOCK_ACTIVO, estadoMock } from '../../config';
 import BarraProgreso from '../estado/BarraProgreso';
 import PanelSimulador from '../estado/PanelSimulador';
 
@@ -58,6 +58,15 @@ export default function Layout() {
           <MenuCategorias />
         </div>
       </header>
+
+      {estadoMock.error && (
+        <div role="alert" className="border-b border-ocre-400/40 bg-ocre-100 px-4 py-3 text-sm text-ocre-700">
+          <p className="mx-auto max-w-6xl">
+            <strong>No se pudo iniciar la API simulada.</strong> Este sitio usa un Service Worker para simular el servidor y tu
+            navegador no lo permitió (suele ocurrir en ventanas privadas o de incógnito). Ábrelo en una ventana normal para ver el catálogo.
+          </p>
+        </div>
+      )}
 
       <main id="contenido" ref={mainRef} tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 pb-24 pt-8 focus:outline-none">
         <Outlet />

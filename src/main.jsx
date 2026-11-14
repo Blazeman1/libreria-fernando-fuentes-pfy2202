@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
-import { MOCK_ACTIVO } from './config';
+import { MOCK_ACTIVO, estadoMock } from './config';
 import './index.css';
 
 // Activa el backend simulado antes de montar React. Así ninguna petición
@@ -17,10 +17,17 @@ async function habilitarMock() {
   });
 }
 
-habilitarMock().then(() => {
-  createRoot(document.getElementById('root')).render(
-    <StrictMode>
-      <App />
-    </StrictMode>
-  );
-});
+// La aplicación se monta SIEMPRE, aunque el mock falle: así el usuario ve
+// un aviso con la causa en vez de una página en blanco.
+habilitarMock()
+  .catch((error) => {
+    estadoMock.error = error;
+    console.error('No se pudo iniciar la API simulada (MSW):', error);
+  })
+  .finally(() => {
+    createRoot(document.getElementById('root')).render(
+      <StrictMode>
+        <App />
+      </StrictMode>
+    );
+  });
