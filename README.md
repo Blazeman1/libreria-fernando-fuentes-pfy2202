@@ -5,9 +5,9 @@ Actividad formativa · **Desarrollo Frontend II (PFY2202)** · Experiencia 2, Se
 
 **Autor:** Fernando Fuentes Allende — Duoc UC
 
-Tienda de libros en **React** donde los usuarios exploran categorías de libros obtenidas desde una **API REST simulada con MSW (Mock Service Worker)**, con navegación mediante **React Router v6** y estilos con **Tailwind CSS**.
+Tienda de libros en **React** donde los usuarios exploran categorías de libros obtenidas desde una **API REST simulada con MSW (Mock Service Worker)**, con navegación mediante **React Router v7** y estilos con **Tailwind CSS**.
 
-> Nombre del repositorio: las instrucciones indican el formato `hospital-nombre-apellido-siglaCurso`, por lo que se usa `hospital-fernando-fuentes-pfy2202`, aunque el proyecto es una librería.
+> Repositorio: `libreria-fernando-fuentes-pfy2202`. Las instrucciones indican el formato `hospital-nombre-apellido-siglaCurso`, que no corresponde a una tienda de libros, así que se usó el mismo formato con el nombre del dominio de la actividad.
 
 ## Requisitos de la actividad
 
@@ -110,5 +110,7 @@ npm run lint
 ```
 
 > El proyecto usa **Vite** en vez de Create React App (descontinuado). Por eso la condición de la guía `process.env.NODE_ENV === 'development'` se escribe `import.meta.env.DEV`. MSW, `fetch`, `useEffect` y React Router se usan igual que en la guía.
+>
+> **Dependencias:** `npm audit` reporta 0 vulnerabilidades. Para eso se usa React Router v7 (corrige un *open redirect* presente en toda la v6) y Vitest 4. React Router v7 aplica los cambios de URL dentro de `startTransition`; por eso el buscador de cada categoría guarda su texto en un estado local y escribe la URL 250 ms después de la última tecla (si leyera su valor directo de la URL, se perderían letras al escribir rápido).
 >
 > MSW se activa en desarrollo. Para compilar una demostración con el mock incluido: `VITE_USAR_MOCK=true npm run build`.
