@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useCategorias, useLibrosDeCategoria } from '../api/libreria';
 import { useTitulo } from '../hooks/useTitulo';
@@ -45,14 +45,44 @@ export default function Categoria() {
   // Búsqueda y orden se aplican sobre los libros YA recibidos: escribir en
   // el buscador o cambiar el orden no genera ninguna petición al servidor.
   const [params, setParams] = useSearchParams();
-  const texto = params.get('q') ?? '';
+  const qUrl = params.get('q') ?? '';
   const orden = ORDENES[params.get('orden')] ? params.get('orden') : 'titulo';
-  const actualizar = (clave, valor) => {
-    const siguiente = new URLSearchParams(params);
-    if (valor) siguiente.set(clave, valor);
-    else siguiente.delete(clave);
-    setParams(siguiente, { replace: true });
-  };
+  const actualizar = (clave, valor) =>
+    setParams(
+      (actual) => {
+        const siguiente = new URLSearchParams(actual);
+        if (valor) siguiente.set(clave, valor);
+        else siguiente.delete(clave);
+        return siguiente;
+      },
+      { replace: true }
+    );
+
+  // El texto del buscador vive en un estado LOCAL, que se actualiza en cada
+  // tecla. React Router v7 aplica los cambios de URL dentro de una transición
+  // (startTransition): si el input leyera su valor directo de la URL, al
+  // escribir rápido se perderían letras. La URL se actualiza 250 ms después
+  // de la última tecla, así el filtro se puede compartir igual.
+  const [texto, setTexto] = useState(qUrl);
+  const escritoRef = useRef(qUrl);
+
+  useEffect(() => {
+    if (texto === escritoRef.current) return undefined;
+    const temporizador = setTimeout(() => {
+      escritoRef.current = texto;
+      actualizar('q', texto);
+    }, 250);
+    return () => clearTimeout(temporizador);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- actualizar usa la forma funcional de setParams
+  }, [texto]);
+
+  // La URL cambió por otra vía (Atrás/Adelante, otra categoría): el buscador la sigue.
+  useEffect(() => {
+    if (qUrl !== escritoRef.current) {
+      escritoRef.current = qUrl;
+      setTexto(qUrl);
+    }
+  }, [qUrl]);
 
   const visibles = useMemo(() => {
     if (!datos) return [];
@@ -104,7 +134,7 @@ export default function Categoria() {
               <div role="search" className="grid gap-3 sm:grid-cols-[1fr_220px]">
                 <label>
                   <span className="sr-only">Buscar en {datos.categoria.nombre}</span>
-                  <input type="search" className="campo" placeholder="Buscar por título o autor" value={texto} onChange={(e) => actualizar('q', e.target.value)} />
+                  <input type="search" className="campo" placeholder="Buscar por título o autor" value={texto} onChange={(e) => setTexto(e.target.value)} />
                 </label>
                 <label>
                   <span className="sr-only">Ordenar</span>
@@ -121,7 +151,7 @@ export default function Categoria() {
               {visibles.length === 0 ? (
                 <p className="tarjeta p-6 text-center text-stone-600">
                   Ningún libro coincide con «{texto}».{' '}
-                  <button type="button" className="enlace" onClick={() => actualizar('q', '')}>Limpiar búsqueda</button>
+                  <button type="button" className="enlace" onClick={() => setTexto('')}>Limpiar búsqueda</button>
                 </p>
               ) : (
                 <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
