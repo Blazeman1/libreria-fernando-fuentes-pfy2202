@@ -5,8 +5,6 @@ Actividad formativa · **Desarrollo Frontend II (PFY2202)** · Experiencia 2, Se
 
 **Autor:** Fernando Fuentes Allende — Duoc UC
 
-**Sitio publicado:** https://blazeman1.github.io/libreria-fernando-fuentes-pfy2202/
-
 Tienda de libros en **React** donde los usuarios exploran categorías de libros obtenidas desde una **API REST simulada con MSW (Mock Service Worker)**, con navegación mediante **React Router v7** y estilos con **Tailwind CSS**.
 
 > Repositorio: `libreria-fernando-fuentes-pfy2202`. Las instrucciones indican el formato `hospital-nombre-apellido-siglaCurso`, que no corresponde a una tienda de libros, así que se usó el mismo formato con el nombre del dominio de la actividad.
@@ -117,7 +115,9 @@ npm run lint
 >
 > MSW se activa en desarrollo. Para compilar una demostración con el mock incluido: `VITE_USAR_MOCK=true npm run build`.
 
-## Publicación en GitHub Pages
+## Publicación en GitHub Pages (opcional)
+
+La actividad no exige publicar el sitio; el proyecto queda preparado por si se quiere hacer.
 
 ```bash
 npm run deploy     # compila en modo "ghpages" y publica dist/ en la rama gh-pages
