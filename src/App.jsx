@@ -10,9 +10,14 @@ import NoEncontrado from './pages/NoEncontrado';
 //   /categorias/:slug    Libros de una categoría (GET /api/categorias/:slug/libros)
 //   /libros/:id          Detalle de un libro (GET /api/libros/:id)
 //   *                    404
+//
+// basename: en GitHub Pages las rutas viven bajo /libreria-fernando-fuentes-pfy2202/.
+// Vite entrega ese prefijo en BASE_URL ("/" en desarrollo).
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
+
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<Inicio />} />

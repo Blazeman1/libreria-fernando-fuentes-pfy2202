@@ -5,6 +5,8 @@ Actividad formativa · **Desarrollo Frontend II (PFY2202)** · Experiencia 2, Se
 
 **Autor:** Fernando Fuentes Allende — Duoc UC
 
+**Sitio publicado:** https://blazeman1.github.io/libreria-fernando-fuentes-pfy2202/
+
 Tienda de libros en **React** donde los usuarios exploran categorías de libros obtenidas desde una **API REST simulada con MSW (Mock Service Worker)**, con navegación mediante **React Router v7** y estilos con **Tailwind CSS**.
 
 > Repositorio: `libreria-fernando-fuentes-pfy2202`. Las instrucciones indican el formato `hospital-nombre-apellido-siglaCurso`, que no corresponde a una tienda de libros, así que se usó el mismo formato con el nombre del dominio de la actividad.
@@ -114,3 +116,17 @@ npm run lint
 > **Dependencias:** `npm audit` reporta 0 vulnerabilidades. Para eso se usa React Router v7 (corrige un *open redirect* presente en toda la v6) y Vitest 4. React Router v7 aplica los cambios de URL dentro de `startTransition`; por eso el buscador de cada categoría guarda su texto en un estado local y escribe la URL 250 ms después de la última tecla (si leyera su valor directo de la URL, se perderían letras al escribir rápido).
 >
 > MSW se activa en desarrollo. Para compilar una demostración con el mock incluido: `VITE_USAR_MOCK=true npm run build`.
+
+## Publicación en GitHub Pages
+
+```bash
+npm run deploy     # compila en modo "ghpages" y publica dist/ en la rama gh-pages
+```
+
+Configuración, una sola vez: **Settings → Pages → Source: Deploy from a branch → Branch `gh-pages` / `(root)`**.
+
+GitHub Pages solo sirve archivos estáticos y aquí no hay backend real. Por eso:
+
+- **El mock viaja con el sitio.** `npm run build:pages` usa el modo `ghpages` (`.env.ghpages` → `VITE_USAR_MOCK=true`). Así MSW, su `mockServiceWorker.js` y el simulador de fallas quedan incluidos, y la API responde igual que en desarrollo.
+- **Prefijo del repositorio.** `vite.config.js` compila con `base: '/libreria-fernando-fuentes-pfy2202/'` y `App.jsx` pasa ese mismo prefijo a `BrowserRouter` como `basename`. El Service Worker se registra en `BASE_URL + 'mockServiceWorker.js'`.
+- **Recargar en una ruta interna.** El build copia `index.html` como `404.html`. Al abrir o recargar `/categorias/poesia`, GitHub entrega ese archivo, la aplicación arranca y React Router muestra la página correcta.
